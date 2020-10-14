@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const isEmail = require('validator/lib/isEmail');
+const isURL = require('validator/lib/isURL');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -17,11 +19,22 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator(value) {
-        return /^(?:(?:https?|HTTPS?):\/\/)(?:\S+(?::\S*)?@)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(value);
-      },
+      validator: (v) => isURL(v),
       message: 'Введите правильную ссылку',
     },
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: {
+      validator: (v) => isEmail(v),
+      message: 'Неправильный формат почты',
+    },
+  },
+  password: {
+    type: String,
+    required: true,
   },
 });
 
