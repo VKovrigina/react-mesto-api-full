@@ -4,15 +4,20 @@ const { showError } = require('../helpers/showError');
 
 module.exports.postUser = (req, res) => {
   const {
-    name, about, avatar, email, password,
+    name: userName,
+    about: userAbout,
+    avatar: userAvatar,
+    email: userEmail,
+    password: userPassword,
   } = req.body;
-
-  bcrypt.hash(password, 10)
-    .then((hash) => {
-      User.create({
-        name, about, avatar, email, hash,
-      });
-    })
+  bcrypt.hash(userPassword, 10)
+    .then((hash) => User.create({
+      name: userName,
+      about: userAbout,
+      avatar: userAvatar,
+      email: userEmail,
+      password: hash,
+    }))
     .then((user) => res
       .status(200)
       .send({ data: user }))
