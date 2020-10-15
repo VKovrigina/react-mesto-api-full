@@ -7,6 +7,7 @@ const { PORT = 3000 } = process.env;
 const app = express();
 const { cardsRouter } = require('./routes/cards');
 const { usersRouter } = require('./routes/users');
+const { login, createUser } = require('./controllers/users');
 const { showError } = require('./helpers/showError');
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
@@ -35,6 +36,10 @@ app.use((req, res, next) => {
 });
 
 app.use(limiter);
+
+app.post('/signin', login);
+
+app.post('/signup', createUser);
 
 app.use('/cards', cardsRouter);
 

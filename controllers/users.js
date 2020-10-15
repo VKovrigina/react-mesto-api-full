@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { showError } = require('../helpers/showError');
 
-module.exports.postUser = (req, res) => {
+module.exports.createUser = (req, res) => {
   const {
     name: userName,
     about: userAbout,
