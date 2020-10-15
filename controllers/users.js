@@ -72,3 +72,17 @@ module.exports.getUsersById = (req, res) => {
       showError(res, err, 500);
     });
 };
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then(() => {
+      // аутентификация успешна! пользователь в переменной user
+    })
+    .catch((err) => {
+      res
+        .status(401)
+        .send({ message: err.message });
+    });
+};
