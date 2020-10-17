@@ -37,12 +37,17 @@ module.exports.getCards = (req, res) => {
 };
 
 module.exports.deleteCardById = (req, res) => {
-  Card.findOneAndRemove({ _id: req.params.id })
+  Card.findOne({ _id: req.params.id })
     .orFail(new Error('NotValidId'))
     .then((card) => {
-      res
-        .status(200)
-        .send({ data: card });
+      if (card.owner._id.equals(req.user._id)) {
+        card.remove();
+        res
+          .status(200)
+          .send({ message: 'Карточка успешно удалена.' });
+      } else {
+        showError(res, 'Вы не можете удалить чужую карточку, как бы она вам не нравилась..', 401);
+      }
     })
     .catch((err) => {
       /* eslint-disable-next-line no-console */
