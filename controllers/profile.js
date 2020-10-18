@@ -1,7 +1,8 @@
 const User = require('../models/user');
 const { showError } = require('../helpers/showError');
+const BadRequestError = require('../errors/BadRequestError');
 
-module.exports.editProfile = (req, res) => {
+module.exports.editProfile = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     {
@@ -15,14 +16,15 @@ module.exports.editProfile = (req, res) => {
   )
     .then((user) => res
       .status(200)
-      .send({ data: user }))
+      .send({ message: `Ваш обновленный профиль: имя - '${user.name}'; о себе - '${user.about}'` }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        showError(res, 'Введены некорректные данные', 400);
+        throw new BadRequestError('Введены некорректные данные');
       } else {
-        showError(res, err, 500);
+        throw new Error();
       }
-    });
+    })
+    .catch(next);
 };
 
 module.exports.editAvatar = (req, res) => {
@@ -38,7 +40,7 @@ module.exports.editAvatar = (req, res) => {
   )
     .then((user) => res
       .status(200)
-      .send({ data: user }))
+      .send({ message: `Теперь ссылка на ваш автар - это ${user.avatar}` }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         showError(res, 'Введены некорректные данные', 400);
