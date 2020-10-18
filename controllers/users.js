@@ -1,9 +1,11 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { showError } = require('../helpers/showError');
+const BadRequestError = require('../errors/BadRequestError');
+const NotFoundError = require('../errors/NotFoundError');
+const UnauthorizedError = require('../errors/UnauthorizedError');
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
     name: userName,
     about: userAbout,
@@ -24,18 +26,19 @@ module.exports.createUser = (req, res) => {
       .send({ message: `Пользователь с именем '${user.name}' успешно создан!` }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        showError(res, 'Введены некорректные данные', 400);
-        return;
+        throw new BadRequestError('Введены некорректные данные');
+      } else {
+        throw new Error();
       }
-      showError(res, err, 500);
-    });
+    })
+    .catch(next);
 };
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       if (users.length === 0) {
-        showError(res, 'В базе данных нет пользователей', 404);
+        throw new NotFoundError('В базе данных нет карточек');
       } else {
         res
           .status(200)
@@ -45,11 +48,16 @@ module.exports.getUsers = (req, res) => {
     .catch((err) => {
     /* eslint-disable-next-line no-console */
       console.error(`При запросе данных о пользователях произошла ошибка: ${err}`);
-      showError(res, err, 500);
-    });
+      if (err.name === 'NotFoundError') {
+        next(err);
+      } else {
+        throw new Error();
+      }
+    })
+    .catch(next);
 };
 
-module.exports.getUsersById = (req, res) => {
+module.exports.getUsersById = (req, res, next) => {
   User.findOne({ _id: req.params.id })
     .orFail(new Error('NotValidId'))
     .then((user) => {
@@ -61,22 +69,18 @@ module.exports.getUsersById = (req, res) => {
       /* eslint-disable-next-line no-console */
       console.error(`При запросе данных пользователя по id произошла ошибка: ${err}`);
       if (err.name === 'CastError') {
-        showError(res, 'Проверьте валидность идентификатора', 400);
-        return;
+        throw new BadRequestError('Проверьте валидность идентификатора');
+      } else if (err.message === 'NotValidId') {
+        throw new NotFoundError('Упс! Такого пользователя не существует :(');
+      } else {
+        throw new Error();
       }
-
-      if (err.message === 'NotValidId') {
-        showError(res, 'Упс! Такого пользователя не существует :(', 404);
-        return;
-      }
-
-      showError(res, err, 500);
-    });
+    })
+    .catch(next);
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
@@ -86,9 +90,8 @@ module.exports.login = (req, res) => {
       );
       res.send({ token });
     })
-    .catch((err) => {
-      res
-        .status(401)
-        .send({ message: err.message });
-    });
+    .catch(() => {
+      throw new UnauthorizedError('Необходима авторизация');
+    })
+    .catch(next);
 };
