@@ -9,7 +9,7 @@ module.exports.createCard = (req, res, next) => {
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res
       .status(200)
-      .send({ data: card }))
+      .send({ message: `Карточка с названием '${card.name}' создана!` }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError('Введены некорректные данные');
@@ -51,7 +51,7 @@ module.exports.deleteCardById = (req, res, next) => {
         card.remove();
         res
           .status(200)
-          .send({ message: 'Карточка успешно удалена.' });
+          .send({ message: 'Карточка удалена.' });
       } else {
         throw new UnauthorizedError('Вы не можете удалить чужую карточку, как бы она вам не нравилась..');
       }
@@ -82,7 +82,7 @@ module.exports.likeCard = (req, res, next) => {
     .then((card) => {
       res
         .status(200)
-        .send({ data: card });
+        .send({ message: `На карточку '${card.name}' поставлен лайк.` });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -106,7 +106,7 @@ module.exports.dislikeCard = (req, res, next) => {
     .then((card) => {
       res
         .status(200)
-        .send({ data: card });
+        .send({ message: `С карточки '${card.name}' снят лайк.` });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
