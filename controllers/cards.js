@@ -1,7 +1,9 @@
 const Card = require('../models/card');
-const { showError } = require('../helpers/showError');
+const BadRequestError = require('../errors/BadRequestError');
+const NotFoundError = require('../errors/NotFoundError');
+const UnauthorizedError = require('../errors/UnauthorizedError');
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
@@ -10,20 +12,20 @@ module.exports.createCard = (req, res) => {
       .send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        showError(res, 'Введены некорректные данные', 400);
+        throw new BadRequestError('Введены некорректные данные');
       } else {
-        showError(res, err, 500);
+        throw new Error();
       }
-    });
+    })
+    .catch(next);
 };
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .populate('owner')
     .then((cards) => {
       if (cards.length === 0) {
-        showError(res, 'В базе данных нет карточек', 500);
-        return;
+        throw new NotFoundError('В базе данных нет карточек');
       }
       res
         .status(200)
@@ -32,11 +34,16 @@ module.exports.getCards = (req, res) => {
     .catch((err) => {
       /* eslint-disable-next-line no-console */
       console.error(`При запросе данных карточек произошла ошибка: ${err}`);
-      showError(res, err, 500);
-    });
+      if (err.statusCode === 404) {
+        next(err);
+      } else {
+        throw new Error();
+      }
+    })
+    .catch(next);
 };
 
-module.exports.deleteCardById = (req, res) => {
+module.exports.deleteCardById = (req, res, next) => {
   Card.findOne({ _id: req.params.id })
     .orFail(new Error('NotValidId'))
     .then((card) => {
@@ -46,27 +53,26 @@ module.exports.deleteCardById = (req, res) => {
           .status(200)
           .send({ message: 'Карточка успешно удалена.' });
       } else {
-        showError(res, 'Вы не можете удалить чужую карточку, как бы она вам не нравилась..', 401);
+        throw new UnauthorizedError('Вы не можете удалить чужую карточку, как бы она вам не нравилась..');
       }
     })
     .catch((err) => {
       /* eslint-disable-next-line no-console */
       console.error(`При запросе данных карточки по id произошла ошибка: ${err}`);
       if (err.name === 'CastError') {
-        showError(res, 'Проверьте валидность идентификатора', 400);
-        return;
+        throw new BadRequestError('Проверьте валидность идентификатора');
+      } else if (err.message === 'NotValidId') {
+        throw new NotFoundError('Упс! Запрашиваемая карточка не найдена');
+      } else if (err.name === 'UnauthorizedError') {
+        next(err);
+      } else {
+        throw new Error();
       }
-
-      if (err.message === 'NotValidId') {
-        showError(res, 'Упс! Запрашиваемая карточка не найдена', 404);
-        return;
-      }
-
-      showError(res, err, 500);
-    });
+    })
+    .catch(next);
 };
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.id,
     { $addToSet: { likes: req.user._id } },
@@ -80,20 +86,17 @@ module.exports.likeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        showError(res, 'Проверьте валидность идентификатора карточки', 400);
-        return;
+        throw new BadRequestError('Проверьте валидность идентификатора карточки');
+      } else if (err.message === 'NotValidId') {
+        throw new NotFoundError('Упс! Вы не можете поставить лайк несуществующей карточке');
+      } else {
+        throw new Error();
       }
-
-      if (err.message === 'NotValidId') {
-        showError(res, 'Упс! Вы не можете поставить лайк несуществующей карточке', 404);
-        return;
-      }
-
-      showError(res, err, 500);
-    });
+    })
+    .catch(next);
 };
 
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.id,
     { $pull: { likes: req.user._id } },
@@ -107,15 +110,12 @@ module.exports.dislikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        showError(res, 'Проверьте валидность идентификатора карточки', 400);
-        return;
+        throw new BadRequestError('Проверьте валидность идентификатора карточки');
+      } else if (err.message === 'NotValidId') {
+        throw new NotFoundError('Упс! Вы не можете снять лайк с несуществующей карточки');
+      } else {
+        throw new Error();
       }
-
-      if (err.message === 'NotValidId') {
-        showError(res, 'Упс! Вы не можете снять лайк с несуществующей карточки', 404);
-        return;
-      }
-
-      showError(res, err, 500);
-    });
+    })
+    .catch(next);
 };
