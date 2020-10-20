@@ -12,6 +12,7 @@ const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError.js');
 const auth = require('./middlewares/auth');
 const { validateCreateUser, validateLogin } = require('./middlewares/requestValidation');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -32,6 +33,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(limiter);
 
+app.use(requestLogger);
+
 app.post('/signin', validateLogin, login);
 
 app.post('/signup', validateCreateUser, createUser);
@@ -45,6 +48,8 @@ app.use('/users', usersRouter);
 app.all('*', () => {
   throw new NotFoundError('Запрашиваемый ресурс не найден');
 });
+
+app.use(errorLogger);
 
 app.use(errors());
 
