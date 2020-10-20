@@ -1,10 +1,11 @@
 const router = require('express').Router();
 
 const { editProfile, editAvatar } = require('../controllers/profile');
+const { validateEditProfile, validateEditAvatar } = require('../middlewares/requestValidation');
 
-router.patch('/', editProfile);
+router.patch('/', validateEditProfile, editProfile);
 
-router.patch('/avatar', editAvatar);
+router.patch('/avatar', validateEditAvatar, editAvatar);
 
 module.exports = {
   profileRouter: router,

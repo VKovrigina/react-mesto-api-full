@@ -6,8 +6,9 @@ const {
   likeCard,
   dislikeCard,
 } = require('../controllers/cards');
+const { validateCreateCard } = require('../middlewares/requestValidation');
 
-router.post('/', createCard);
+router.post('/', validateCreateCard, createCard);
 
 router.delete('/:id', deleteCardById);
 
