@@ -7,9 +7,9 @@ const UnauthorizedError = require('../errors/UnauthorizedError');
 
 module.exports.createUser = (req, res, next) => {
   const {
-    name: userName,
-    about: userAbout,
-    avatar: userAvatar,
+    name: userName = 'Ваше имя',
+    about: userAbout = 'О себе',
+    avatar: userAvatar = 'https://images.unsplash.com/photo-1601844569046-b72c31389677?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=676&q=80',
     email: userEmail,
     password: userPassword,
   } = req.body;
@@ -25,8 +25,9 @@ module.exports.createUser = (req, res, next) => {
       .status(200)
       .send({ message: `Пользователь с именем '${user.name}' успешно создан!` }))
     .catch((err) => {
+      console.log(err);
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('Введены некорректные данные');
+        throw new BadRequestError('Введены некорректные данные...');
       } else {
         throw new Error();
       }
