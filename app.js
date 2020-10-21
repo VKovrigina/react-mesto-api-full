@@ -16,6 +16,8 @@ const { validateCreateUser, validateLogin } = require('./middlewares/requestVali
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const allowedCors = [
+  'vk-dev.students.nomoreparties.space',
+  'www.vk-dev.students.nomoreparties.space',
   'localhost:3000',
 ];
 
