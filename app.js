@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const rateLimit = require('express-rate-limit');
 const { errors } = require('celebrate');
+require('dotenv').config();
 // Спасибо большое код-ревьюеру! Хорошего вам дня)
 const { PORT = 3000 } = process.env;
 const app = express();
