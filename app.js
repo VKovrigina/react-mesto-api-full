@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const rateLimit = require('express-rate-limit');
 const { errors } = require('celebrate');
 require('dotenv').config();
+const cors = require('cors');
 // Спасибо большое код-ревьюеру! Хорошего вам дня)
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -22,11 +23,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-
-  next();
-});
+app.use(cors());
 
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000,
