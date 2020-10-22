@@ -15,12 +15,6 @@ const auth = require('./middlewares/auth');
 const { validateCreateUser, validateLogin } = require('./middlewares/requestValidation');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const allowedCors = [
-  'vk-dev.students.nomoreparties.space',
-  'www.vk-dev.students.nomoreparties.space',
-  'localhost:3000',
-];
-
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useCreateIndex: true,
@@ -29,11 +23,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use((req, res, next) => {
-  const { origin } = req.headers;
-
-  if (allowedCors.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
+  res.header('Access-Control-Allow-Origin', '*');
 
   next();
 });
