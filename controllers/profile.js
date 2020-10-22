@@ -49,3 +49,17 @@ module.exports.editAvatar = (req, res, next) => {
     })
     .catch(next);
 };
+
+module.exports.getProfile = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => res
+      .status(200)
+      .send({
+        _id: user._id,
+        email: user.email,
+      }))
+    .catch(() => {
+      throw new Error();
+    })
+    .catch(next);
+};
