@@ -55,10 +55,11 @@ module.exports.getProfile = (req, res, next) => {
     .then((user) => res
       .status(200)
       .send({
-        data: {
-          _id: user._id,
-          email: user.email,
-        },
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
       }))
     .catch(() => {
       throw new Error();
