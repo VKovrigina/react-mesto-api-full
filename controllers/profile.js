@@ -15,7 +15,10 @@ module.exports.editProfile = (req, res, next) => {
   )
     .then((user) => res
       .status(200)
-      .send({ message: `Ваш обновленный профиль: имя - '${user.name}'; о себе - '${user.about}'` }))
+      .send({
+        name: user.name,
+        about: user.about,
+      }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError('Введены некорректные данные');
@@ -39,7 +42,9 @@ module.exports.editAvatar = (req, res, next) => {
   )
     .then((user) => res
       .status(200)
-      .send({ message: `Теперь ссылка на ваш автар - это ${user.avatar}` }))
+      .send({
+        avatar: user.avatar,
+      }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError('Введены некорректные данные');
