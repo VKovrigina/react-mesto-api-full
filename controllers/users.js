@@ -94,12 +94,7 @@ module.exports.login = (req, res, next) => {
         { expiresIn: '7d' },
       );
       res
-        .status(200)
-        .cookie('token', token, {
-          maxAge: 3600000 * 24 * 7,
-          httpOnly: true,
-        })
-        .end();
+        .send({ token });
     })
     .catch(() => {
       throw new UnauthorizedError('Необходима авторизация');

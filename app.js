@@ -5,7 +5,6 @@ const rateLimit = require('express-rate-limit');
 const { errors } = require('celebrate');
 require('dotenv').config();
 const cors = require('cors');
-const cookieParser = require('cookie-parser');
 // Спасибо большое код-ревьюеру! Хорошего вам дня)
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -24,12 +23,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true,
-}));
-
-app.use(cookieParser());
+app.use(cors());
 
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000,
