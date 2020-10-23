@@ -7,9 +7,17 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res
-      .status(200)
-      .send({ data: card }))
+    .then((card) => {
+      Card.findById(card._id)
+        .populate('owner')
+        .then((findedCard) => {
+          res
+            .status(200)
+            .send({ data: findedCard });
+        })
+        .catch(() => { throw new Error(); })
+        .catch(next);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError('Введены некорректные данные');
