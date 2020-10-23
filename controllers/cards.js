@@ -9,7 +9,7 @@ module.exports.createCard = (req, res, next) => {
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res
       .status(200)
-      .send({ message: `Карточка с названием '${card.name}' создана!` }))
+      .send({ card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError('Введены некорректные данные');
