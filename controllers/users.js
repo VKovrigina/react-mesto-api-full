@@ -43,7 +43,7 @@ module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       if (users.length === 0) {
-        throw new NotFoundError('В базе данных нет карточек');
+        throw new NotFoundError('В базе данных нет пользователей');
       } else {
         res
           .status(200)
