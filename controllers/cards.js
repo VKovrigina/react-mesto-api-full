@@ -91,7 +91,7 @@ module.exports.likeCard = (req, res, next) => {
     .then((card) => {
       res
         .status(200)
-        .send({ message: `На карточку '${card.name}' поставлен лайк.` });
+        .send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -115,7 +115,7 @@ module.exports.dislikeCard = (req, res, next) => {
     .then((card) => {
       res
         .status(200)
-        .send({ message: `С карточки '${card.name}' снят лайк.` });
+        .send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
