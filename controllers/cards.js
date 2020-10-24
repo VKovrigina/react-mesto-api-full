@@ -30,6 +30,7 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
+    .sort({ createdAt: -1 })
     .populate('owner')
     .then((cards) => {
       if (cards.length === 0) {
