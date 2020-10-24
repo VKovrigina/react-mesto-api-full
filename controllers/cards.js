@@ -87,6 +87,7 @@ module.exports.likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .populate('owner')
     .orFail(new Error('NotValidId'))
     .then((card) => {
       res
@@ -111,6 +112,7 @@ module.exports.dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .populate('owner')
     .orFail(new Error('NotValidId'))
     .then((card) => {
       res
