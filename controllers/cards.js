@@ -9,7 +9,7 @@ module.exports.createCard = (req, res, next) => {
   Card.create({ name, link, owner: req.user._id })
     .then((card) => {
       Card.findById(card._id)
-        .populate('owner')
+        .populate(['owner', 'likes'])
         .then((findedCard) => {
           res
             .status(200)
@@ -87,7 +87,7 @@ module.exports.likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .populate('owner')
+    .populate(['owner', 'likes'])
     .orFail(new Error('NotValidId'))
     .then((card) => {
       res
@@ -112,7 +112,7 @@ module.exports.dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .populate('owner')
+    .populate(['owner', 'likes'])
     .orFail(new Error('NotValidId'))
     .then((card) => {
       res
