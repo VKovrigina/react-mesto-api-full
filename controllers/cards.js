@@ -31,7 +31,7 @@ module.exports.createCard = (req, res, next) => {
 module.exports.getCards = (req, res, next) => {
   Card.find({})
     .sort({ createdAt: -1 })
-    .populate('owner')
+    .populate(['owner', 'likes'])
     .then((cards) => {
       if (cards.length === 0) {
         throw new NotFoundError('В базе данных нет карточек');
