@@ -34,10 +34,24 @@ const validateEditAvatar = celebrate({
   }),
 });
 
+const validateCardId = celebrate({
+  params: Joi.object().keys({
+    id: Joi.string().hex().length(24),
+  }),
+});
+
+const validateUserId = celebrate({
+  params: Joi.object().keys({
+    id: Joi.string().hex().length(24),
+  }),
+});
+
 module.exports = {
   validateLogin,
   validateCreateUser,
   validateCreateCard,
   validateEditProfile,
   validateEditAvatar,
+  validateCardId,
+  validateUserId,
 };
