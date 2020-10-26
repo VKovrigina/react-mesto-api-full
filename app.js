@@ -6,6 +6,7 @@ const { errors } = require('celebrate');
 require('dotenv').config();
 const cors = require('cors');
 // Спасибо большое код-ревьюеру! Хорошего вам дня)
+// и спасибо большое за скриншоты ошибок, они очень выручили :)
 const { PORT = 3000 } = process.env;
 const app = express();
 const { cardsRouter } = require('./routes/cards');
