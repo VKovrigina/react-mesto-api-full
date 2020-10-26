@@ -33,21 +33,9 @@ module.exports.getCards = (req, res, next) => {
     .sort({ createdAt: -1 })
     .populate(['owner', 'likes'])
     .then((cards) => {
-      if (cards.length === 0) {
-        throw new NotFoundError('В базе данных нет карточек');
-      }
       res
         .status(200)
         .send({ data: cards });
-    })
-    .catch((err) => {
-      /* eslint-disable-next-line no-console */
-      console.error(`При запросе данных карточек произошла ошибка: ${err}`);
-      if (err.statusCode === 404) {
-        next(err);
-      } else {
-        throw new Error();
-      }
     })
     .catch(next);
 };
