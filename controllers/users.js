@@ -49,15 +49,6 @@ module.exports.getUsers = (req, res, next) => {
           .send({ data: users });
       }
     })
-    .catch((err) => {
-    /* eslint-disable-next-line no-console */
-      console.error(`При запросе данных о пользователях произошла ошибка: ${err}`);
-      if (err.name === 'NotFoundError') {
-        next(err);
-      } else {
-        throw new Error();
-      }
-    })
     .catch(next);
 };
 

@@ -22,9 +22,8 @@ module.exports.editProfile = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError('Введены некорректные данные');
-      } else {
-        throw new Error();
       }
+      throw err;
     })
     .catch(next);
 };
@@ -48,9 +47,8 @@ module.exports.editAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError('Введены некорректные данные');
-      } else {
-        throw new Error();
       }
+      throw err;
     })
     .catch(next);
 };
@@ -66,8 +64,8 @@ module.exports.getProfile = (req, res, next) => {
         about: user.about,
         avatar: user.avatar,
       }))
-    .catch(() => {
-      throw new Error();
+    .catch((err) => {
+      throw err;
     })
     .catch(next);
 };
