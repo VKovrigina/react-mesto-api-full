@@ -53,8 +53,6 @@ module.exports.deleteCardById = (req, res, next) => {
       }
     })
     .catch((err) => {
-      /* eslint-disable-next-line no-console */
-      console.error(`При запросе данных карточки по id произошла ошибка: ${err}`);
       if (err.name === 'CastError') {
         throw new BadRequestError('Проверьте валидность идентификатора');
       }
