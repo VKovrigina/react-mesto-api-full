@@ -16,15 +16,15 @@ const validateCreateUser = celebrate({
 
 const validateCreateCard = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required().min(1).max(30),
+    name: Joi.string().required().min(2).max(30),
     link: Joi.string().regex(/^(?:(?:https?|HTTPS?):\/\/)(?:\S+(?::\S*)?@)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/),
   }),
 });
 
 const validateEditProfile = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(40),
-    about: Joi.string().required().min(2).max(40),
+    name: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(30),
   }),
 });
 
