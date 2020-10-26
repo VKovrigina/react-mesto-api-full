@@ -63,7 +63,7 @@ module.exports.getUsers = (req, res, next) => {
 
 module.exports.getUsersById = (req, res, next) => {
   User.findOne({ _id: req.params.id })
-    .orFail(new Error('NotValidId'))
+    .orFail(new NotFoundError('Упс! Такого пользователя не существует :('))
     .then((user) => {
       res
         .status(200)
@@ -74,11 +74,8 @@ module.exports.getUsersById = (req, res, next) => {
       console.error(`При запросе данных пользователя по id произошла ошибка: ${err}`);
       if (err.name === 'CastError') {
         throw new BadRequestError('Проверьте валидность идентификатора');
-      } else if (err.message === 'NotValidId') {
-        throw new NotFoundError('Упс! Такого пользователя не существует :(');
-      } else {
-        throw new Error();
       }
+      throw err;
     })
     .catch(next);
 };
