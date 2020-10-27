@@ -1,5 +1,7 @@
 const { celebrate, Joi } = require('celebrate');
 
+const regex = /^(?:(?:https?|HTTPS?):\/\/)(?:\S+(?::\S*)?@)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+
 const validateLogin = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
@@ -17,7 +19,14 @@ const validateCreateUser = celebrate({
 const validateCreateCard = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().regex(/^(?:(?:https?|HTTPS?):\/\/)(?:\S+(?::\S*)?@)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/),
+    link: Joi.string()
+      .required()
+      .custom((value, helpers) => {
+        if (!regex.test(value)) {
+          return helpers.message('Invalid link');
+        }
+        return value;
+      }),
   }),
 });
 
@@ -30,7 +39,14 @@ const validateEditProfile = celebrate({
 
 const validateEditAvatar = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().regex(/^(?:(?:https?|HTTPS?):\/\/)(?:\S+(?::\S*)?@)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/),
+    avatar: Joi.string()
+      .required()
+      .custom((value, helpers) => {
+        if (!regex.test(value)) {
+          return helpers.message('Invalid link');
+        }
+        return value;
+      }),
   }),
 });
 
