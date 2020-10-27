@@ -83,7 +83,6 @@ module.exports.login = (req, res, next) => {
         .send({ token });
     })
     .catch(() => {
-      throw new UnauthorizedError('Необходима авторизация');
-    })
-    .catch(next);
+      next(new UnauthorizedError('Необходима авторизация'));
+    });
 };
